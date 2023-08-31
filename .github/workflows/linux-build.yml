@@ -1,0 +1,43 @@
+name: Linux Musl Binary Build
+
+
+on:
+  workflow_call:
+  push:
+    branches:
+      - "main"
+
+env:
+  CARGO_TERM_COLOR: always
+
+
+jobs:
+  build-bin:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [armv7-unknown-linux-musleabihf,aarch64-unknown-linux-musl,x86_64-unknown-linux-musl]
+    container:
+      image: martadinata666/rust:latest
+      options: --user root
+      env:
+        CARGO_TERM_COLOR: always
+        CARGO_HOME: ${GITHUB_WORKSPACE}/.cargo
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            .cargo/registry/index
+            .cargo/registry/cache
+            .cargo/git/db
+            target/
+          key: hctl-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            lldap-${{ matrix.target }}-
+      - name: show my env
+        run: env
+
+      - name: compile ${{ matrix.target }}
+        run: cargo build --target=${{ matrix.target }} --release
+
