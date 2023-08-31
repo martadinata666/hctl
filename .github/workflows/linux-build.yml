@@ -25,10 +25,10 @@ jobs:
         CARGO_TERM_COLOR: always
         CARGO_HOME: ${GITHUB_WORKSPACE}/.cargo
     steps:
-      - name: Install Openssl-dev
-        run: |
-             apt update
-             apt install -y libssl-dev
+ #     - name: Install Openssl-dev
+ #       run: |
+ #            apt update
+ #            apt install -y libssl-dev
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
